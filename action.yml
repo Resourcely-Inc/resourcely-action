@@ -7,6 +7,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: echo ${{ inputs.token }}
+    - run: docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
       shell: bash
       name: Execute echo
