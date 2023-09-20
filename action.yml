@@ -1,0 +1,10 @@
+name: 'Resourcely Change Management'
+description: 'Scan the pr against all related guardrails'
+inputs:
+  token:
+    description: 'token'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: echo ${{ inputs.token }}
