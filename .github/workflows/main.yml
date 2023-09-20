@@ -5,7 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to say hello
     steps:
-      - id: foo
-        uses: ./
-        with:
-          token: 'Carl token'
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run my name
+        uses: ./action.yml
+
