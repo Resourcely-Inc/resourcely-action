@@ -7,6 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: foo
-        uses: resourcely-github-action@v0
+        uses: ./
         with:
           token: 'Carl token'
