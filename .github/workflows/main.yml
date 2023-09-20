@@ -10,4 +10,6 @@ jobs:
 
       - name: Run my name
         uses: ./
+        with:
+            token: "omg"
 
