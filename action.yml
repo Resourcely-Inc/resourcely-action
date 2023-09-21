@@ -18,7 +18,7 @@ inputs:
     required: true
   tf_plan_directory:
     description: 'directory to hold all the terraform plan'
-    required: true
+    required: false
     default: 'tf-plan-files'
 runs:
   using: "composite"
