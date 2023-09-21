@@ -1,49 +1,48 @@
 name: 'Resourcely Change Management'
 description: 'Scan the pr against all related guardrails'
 inputs:
-  GH_ACCESS_TOKEN:
+  gh_access_token:
     description: 'github client access token'
     required: true
-  TF_API_TOKEN:
-    description: 'terraform cloud api token'
-    required: true
-  RESOURCELY_API_TOKEN:
+  tf_api_token:
+    description: 'terraform cloud api token; if not specified, then will not go to terraform cloud to fetch the plan'
+    required: false
+  resourcely_api_token:
     description: 'api to access resourcely api'
     required: true
-  GITHUB_TOKEN:
+  github_token:
     description: 'token for github app'
     required: true
-  RESOURCELY_API_HOST:
+  resourcely_api_host:
     description: 'url for the resoucely api'
     required: true
 runs:
   using: "composite"
   steps:
-    - run: docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
-      shell: bash
-      name: Pull wait-for-terraform-plan docker image
-
     - run: mkdir tf-plan-files
       shell: bash
       name: Create directory for plan files
 
     - name: Wait for checks to complete
       shell: bash
+      if:  ${{ inputs.tf_api_token != '' }}
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: |
+        docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
         ENCODED_GITHUB_CONTEXT=$(echo -n "$GITHUB_CONTEXT" | base64)
         docker run \
-          -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
+          -e GITHUB_TOKEN="${{ inputs.gh_access_token }}" \
           -e GITHUB_CONTEXT="${ENCODED_GITHUB_CONTEXT}" \
-          -e TF_API_TOKEN="${{ inputs.TF_API_TOKEN }}" \
+          -e TF_API_TOKEN="${{ inputs.tf_api_token }}" \
           -e RESOURCELY_API_HOST="https://api.dev.resourcely.io" \
-          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
+
     - name: Login to Github Container Registry
       shell: bash
-      run: echo ${{ inputs.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo ${{ inputs.github_token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Evaluate Code With Resourcely Guardrails
       shell: bash
@@ -53,10 +52,10 @@ runs:
         plans=$(ls -1 tf-plan-files/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
         docker run --rm \
           -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
-          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
-          -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
+          -e GITHUB_TOKEN="${{ inputs.gh_access_token }}" \
           ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
-          --api_host "${{ inputs.RESOURCELY_API_HOST }}" \
+          --api_host "${{ inputs.resourcely_api_host }}" \
           --vcs github \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
           --change_request_sha "${{ github.event.pull_request.head.sha }}" \
