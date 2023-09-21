@@ -9,4 +9,8 @@ runs:
   steps:
     - run: docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
       shell: bash
-      name: Execute echo
+      name: Pull wait-for-terraform-plan docker image
+
+    - run: mkdir tf-plan-files
+      shell: bash
+      name: Create directory for plan files
