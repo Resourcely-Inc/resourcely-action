@@ -1,8 +1,14 @@
 name: 'Resourcely Change Management'
 description: 'Scan the pr against all related guardrails'
 inputs:
-  token:
-    description: 'token'
+  GH_ACCESS_TOKEN:
+    description: 'GH_ACCESS_TOKEN'
+    required: true
+  TF_API_TOKEN:
+    description: 'TF_API_TOKEN'
+    required: true
+  RESOURCELY_API_TOKEN_DEV:
+    description: 'TF_API_TOKEN'
     required: true
 runs:
   using: "composite"
@@ -14,3 +20,18 @@ runs:
     - run: mkdir tf-plan-files
       shell: bash
       name: Create directory for plan files
+
+    - name: Wait for checks to complete
+      shell: bash
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        ENCODED_GITHUB_CONTEXT=$(echo -n "$GITHUB_CONTEXT" | base64)
+        docker run \
+          -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
+          -e GITHUB_CONTEXT="${ENCODED_GITHUB_CONTEXT}" \
+          -e TF_API_TOKEN="${{ inputs.TF_API_TOKEN }}" \
+          -e RESOURCELY_API_HOST="https://api.dev.resourcely.io" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN_DEV }}" \
+          -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
+          ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
