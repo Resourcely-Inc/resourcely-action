@@ -32,6 +32,6 @@ runs:
           -e GITHUB_CONTEXT="${ENCODED_GITHUB_CONTEXT}" \
           -e TF_API_TOKEN="${{ inputs.TF_API_TOKEN }}" \
           -e RESOURCELY_API_HOST="https://api.dev.resourcely.io" \
-          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN_DEV }}" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
           -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
