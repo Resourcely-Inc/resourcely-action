@@ -39,24 +39,24 @@ runs:
           -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
 
-      - name: Login to Github Container Registry.
-        run: echo ${{ inputs.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        shell: bash
-
-      - name: Evaluate Code With Resourcely Guardrails
-        shell: bash
-        if: success()
-        run: |
-          RESOURCELY_API_HOST="https://api.dev.resourcely.io"
-          docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
-          plans=$(ls -1 tf-plan-files/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
-          docker run --rm \
-            -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
-            -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
-            -e GITHUB_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
-            ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
-            --api_host "${RESOURCELY_API_HOST}" \
-            --vcs github \
-            --change_request_url "${{ github.event.pull_request.html_url }}" \
-            --change_request_sha "${{ github.event.pull_request.head.sha }}" \
-            "${plans}"
+    - name: Login to Github Container Registry
+      shell: bash
+      run: echo ${{ inputs.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: Evaluate Code With Resourcely Guardrails
+      shell: bash
+      if: success()
+      run: |
+        RESOURCELY_API_HOST="https://api.dev.resourcely.io"
+        docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
+        plans=$(ls -1 tf-plan-files/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
+        docker run --rm \
+          -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          -e GITHUB_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
+          --api_host "${RESOURCELY_API_HOST}" \
+          --vcs github \
+          --change_request_url "${{ github.event.pull_request.html_url }}" \
+          --change_request_sha "${{ github.event.pull_request.head.sha }}" \
+          "${plans}"
