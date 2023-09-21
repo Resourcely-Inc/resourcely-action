@@ -2,16 +2,16 @@ name: 'Resourcely Change Management'
 description: 'Scan the pr against all related guardrails'
 inputs:
   GH_ACCESS_TOKEN:
-    description: 'GH_ACCESS_TOKEN'
+    description: 'github client access token'
     required: true
   TF_API_TOKEN:
-    description: 'TF_API_TOKEN'
+    description: 'terraform cloud api token'
     required: true
   RESOURCELY_API_TOKEN:
-    description: 'RESOURCELY_API_TOKEN'
+    description: 'api to access resourcely api'
     required: true
   GITHUB_TOKEN:
-    description: 'GITHUB_TOKEN'
+    description: 'token for github app'
     required: true
 runs:
   using: "composite"
@@ -52,7 +52,7 @@ runs:
         docker run --rm \
           -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
-          -e GITHUB_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
           ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
           --api_host "${RESOURCELY_API_HOST}" \
           --vcs github \
