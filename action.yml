@@ -2,16 +2,13 @@ name: 'Resourcely Change Management'
 description: 'Scan the pr against all related guardrails'
 inputs:
   gh_access_token:
-    description: 'github client access token'
+    description: 'access token to access github'
     required: true
   tf_api_token:
     description: 'terraform cloud api token; if not specified, then will not go to terraform cloud to fetch the plan'
     required: false
   resourcely_api_token:
     description: 'api to access resourcely api'
-    required: true
-  github_token:
-    description: 'token for github app'
     required: true
   resourcely_api_host:
     description: 'url for the resoucely api'

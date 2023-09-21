@@ -8,7 +8,6 @@ To use this github action, you can specify like the following example
           gh_access_token: ${{ secrets.GH_ACCESS_TOKEN }}
           tf_api_token: ${{ secrets.TF_API_TOKEN }}
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN_DEV }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           resourcely_api_host: "https://api.resourcely.io"
           
  ```
