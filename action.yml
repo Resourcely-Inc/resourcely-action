@@ -13,6 +13,9 @@ inputs:
   GITHUB_TOKEN:
     description: 'token for github app'
     required: true
+  RESOURCELY_API_HOST:
+    description: 'url for the resoucely api'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -46,7 +49,6 @@ runs:
       shell: bash
       if: success()
       run: |
-        RESOURCELY_API_HOST="https://api.dev.resourcely.io"
         docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
         plans=$(ls -1 tf-plan-files/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
         docker run --rm \
@@ -54,7 +56,7 @@ runs:
           -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
           -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
           ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
-          --api_host "${RESOURCELY_API_HOST}" \
+          --api_host "${{ inputs.RESOURCELY_API_HOST }}" \
           --vcs github \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
           --change_request_sha "${{ github.event.pull_request.head.sha }}" \
