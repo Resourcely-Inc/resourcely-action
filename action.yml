@@ -7,8 +7,8 @@ inputs:
   TF_API_TOKEN:
     description: 'TF_API_TOKEN'
     required: true
-  RESOURCELY_API_TOKEN_DEV:
-    description: 'TF_API_TOKEN'
+  RESOURCELY_API_TOKEN:
+    description: 'RESOURCELY_API_TOKEN'
     required: true
 runs:
   using: "composite"
