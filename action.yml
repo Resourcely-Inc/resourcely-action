@@ -1,10 +1,61 @@
 name: 'Resourcely Change Management'
 description: 'Scan the pr against all related guardrails'
 inputs:
-  token:
-    description: 'token'
+  GH_ACCESS_TOKEN:
+    description: 'GH_ACCESS_TOKEN'
+    required: true
+  TF_API_TOKEN:
+    description: 'TF_API_TOKEN'
+    required: true
+  RESOURCELY_API_TOKEN:
+    description: 'RESOURCELY_API_TOKEN'
+    required: true
+  GITHUB_TOKEN:
+    description: 'GITHUB_TOKEN'
     required: true
 runs:
   using: "composite"
   steps:
-    - run: echo ${{ inputs.token }}
+    - run: docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
+      shell: bash
+      name: Pull wait-for-terraform-plan docker image
+
+    - run: mkdir tf-plan-files
+      shell: bash
+      name: Create directory for plan files
+
+    - name: Wait for checks to complete
+      shell: bash
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        ENCODED_GITHUB_CONTEXT=$(echo -n "$GITHUB_CONTEXT" | base64)
+        docker run \
+          -e GITHUB_TOKEN="${{ inputs.GH_ACCESS_TOKEN }}" \
+          -e GITHUB_CONTEXT="${ENCODED_GITHUB_CONTEXT}" \
+          -e TF_API_TOKEN="${{ inputs.TF_API_TOKEN }}" \
+          -e RESOURCELY_API_HOST="https://api.dev.resourcely.io" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
+          ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
+    - name: Login to Github Container Registry
+      shell: bash
+      run: echo ${{ inputs.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Evaluate Code With Resourcely Guardrails
+      shell: bash
+      if: success()
+      run: |
+        RESOURCELY_API_HOST="https://api.dev.resourcely.io"
+        docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
+        plans=$(ls -1 tf-plan-files/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
+        docker run --rm \
+          -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
+          -e RESOURCELY_API_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          -e GITHUB_TOKEN="${{ inputs.RESOURCELY_API_TOKEN }}" \
+          ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
+          --api_host "${RESOURCELY_API_HOST}" \
+          --vcs github \
+          --change_request_url "${{ github.event.pull_request.html_url }}" \
+          --change_request_sha "${{ github.event.pull_request.head.sha }}" \
+          "${plans}"
