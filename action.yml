@@ -35,7 +35,7 @@ runs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: |
-        docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
+        docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:latest
         ENCODED_GITHUB_CONTEXT=$(echo -n "$GITHUB_CONTEXT" | base64)
         docker run \
           -e GITHUB_TOKEN="${{ inputs.gh_access_token }}" \
@@ -44,7 +44,7 @@ runs:
           -e RESOURCELY_API_HOST="${{ inputs.resourcely_api_host }}" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
-          ghcr.io/resourcely-inc/wait-for-terraform-plan:dev
+          ghcr.io/resourcely-inc/wait-for-terraform-plan:latest
 
     - name: Login to Github Container Registry
       shell: bash
