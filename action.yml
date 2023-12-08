@@ -46,10 +46,6 @@ runs:
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:latest
 
-    - name: Login to Github Container Registry
-      shell: bash
-      run: echo ${{ inputs.gh_access_token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
     - name: Evaluate Code With Resourcely Guardrails
       shell: bash
       if: success()
