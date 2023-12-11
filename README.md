@@ -1,10 +1,11 @@
 
-This is the repo is to generate the resourcely github action in the marketplace.
+This is the repo to generate the Resourcely Github Action in Github marketplace.
 
-To use this github action, there are two alternative options.
+There are two alternative approaches available.
 
 **Terraform Cloud**
-If you wish for Resourcely to access Terraform Cloud to retrieve the Terraform plan and evaluate your plans and policies with every pull request, configure the `resourcely-action` with the provided settings. For additional information, such as instructions on creating an access token, please refer to the provided [link](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/terraform-cloud)
+
+For Resourcely to access Terraform Cloud and retrieve the Terraform plan, enabling evaluation of your plans and policies with each pull request, configure the resourcely-action using the settings provided. For additional guidance, including instructions on creating an access token, please refer to the [Resourcely documentation](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/terraform-cloud)
 ```   
 # Trigger conditions for running this action
 on:
@@ -15,14 +16,14 @@ on:
 
 # Permissions for the action
 permissions:
-  contents: read  # Read repository content
-  packages: read  # Read packages from the repository
+  contents: read
+  packages: read
 
 # Define jobs to be run
 jobs:
   # Name of the job
   resourcely-ci:
-    runs-on: ubuntu-latest  # The type of machine to run the job on
+    runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
         with:
@@ -39,7 +40,7 @@ jobs:
 
 **Local Plan**
 
-This option requires that the Terraform plan file be available to GitHub Actions and visible to the Resourcely action. By default, Resourcely expected all of your terraform files located in the following directory`tf-plan-files`. For more information, please refer to this [link](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/local-plan). To use this option, you can specify the configuration with the following
+This option requires the Terraform plan file to be accessible to GitHub Actions and visible to the Resourcely action. By default, Resourcely expects all your Terraform files to be located in the tf-plan-files directory. For detailed instructions, please refer to the [Resourcely documentation](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/local-plan). To utilize this option, specify the configuration as follows:
 
 ```
 # Trigger conditions for running this action
@@ -51,14 +52,14 @@ on:
 
 # Permissions for the action
 permissions:
-  contents: read  # Read repository content
-  packages: read  # Read packages from the repository
+  contents: read
+  packages: read
 
 # Define jobs to be run
 jobs:
   # Name of the job
   resourcely-ci:
-    runs-on: ubuntu-latest  # The type of machine to run the job on
+    runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
         with:
@@ -69,7 +70,7 @@ jobs:
 ```
 
 
-If you wish to place all your Terraform files within a directory named according to your custom choice, please indicate the desired configuration using the provided example below.
+If you want to store all your Terraform plan files in a custom-named directory, please specify your preferred configuration using the example provided below:
 ```
 # Trigger conditions for running this action
 on:
@@ -80,14 +81,14 @@ on:
 
 # Permissions for the action
 permissions:
-  contents: read  # Read repository content
-  packages: read  # Read packages from the repository
+  contents: read
+  packages: read
 
 # Define jobs to be run
 jobs:
   # Name of the job
   resourcely-ci:
-    runs-on: ubuntu-latest  # The type of machine to run the job on
+    runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
         with:
@@ -95,7 +96,7 @@ jobs:
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
           # set the resourcely api host
           resourcely_api_host: "https://api.resourcely.io"
-          # set the tf directory for resourcely-action to read files from
+          # set the tf directory for resourcely-action to read plan files from
           tf_directory: "my-custom-directory"
 ```
 
