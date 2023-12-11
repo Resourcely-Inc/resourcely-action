@@ -14,14 +14,12 @@ on:
   pull_request:
     branches: [ main ]
 
-# Permissions for the action
 permissions:
   contents: read
   packages: read
 
 # Define jobs to be run
 jobs:
-  # Name of the job
   resourcely-ci:
     runs-on: ubuntu-latest
     steps:
@@ -50,14 +48,12 @@ on:
   pull_request:
     branches: [ main ]
 
-# Permissions for the action
 permissions:
   contents: read
   packages: read
 
 # Define jobs to be run
 jobs:
-  # Name of the job
   resourcely-ci:
     runs-on: ubuntu-latest
     steps:
@@ -79,14 +75,12 @@ on:
   pull_request:
     branches: [ main ]
 
-# Permissions for the action
 permissions:
   contents: read
   packages: read
 
 # Define jobs to be run
 jobs:
-  # Name of the job
   resourcely-ci:
     runs-on: ubuntu-latest
     steps:
