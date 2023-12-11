@@ -1,7 +1,5 @@
 
-This is the repo to generate the Resourcely Github Action in Github marketplace.
-
-There are two alternative approaches available.
+***There are two options available:***
 
 **Terraform Cloud**
 
@@ -38,7 +36,7 @@ jobs:
 
 **Local Plan**
 
-This option requires the Terraform plan file to be accessible to GitHub Actions and visible to the Resourcely action. By default, Resourcely expects all your Terraform files to be located in the tf-plan-files directory. For detailed instructions, please refer to the [Resourcely documentation](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/local-plan). To utilize this option, specify the configuration as follows:
+This option requires the Terraform plan file to be accessible and visible to the Resourcely GitHub Actions. By default, Resourcely expects all your Terraform files to be located in the `tf-plan-files` directory. For detailed instructions, please refer to the [Resourcely documentation](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/local-plan). To utilize this option, specify the configuration as follows:
 
 ```
 # Trigger conditions for running this action
