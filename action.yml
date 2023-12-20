@@ -3,7 +3,7 @@ description: 'Scan the pr against all related guardrails'
 inputs:
   gh_access_token:
     description: 'access token to access github'
-    required: true
+    required: false
   tf_api_token:
     description: 'terraform cloud api token; if not specified, then will not go to terraform cloud to fetch the plan'
     required: false
@@ -12,7 +12,7 @@ inputs:
     required: true
   resourcely_api_host:
     description: 'url for the resoucely api'
-    required: true
+    required: false
   tf_plan_directory:
     description: 'directory to hold all the terraform plan'
     required: false
