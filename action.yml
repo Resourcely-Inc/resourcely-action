@@ -12,7 +12,7 @@ inputs:
     required: true
   resourcely_api_host:
     description: 'url for the resoucely api'
-    required: false
+    required: true
   tf_plan_directory:
     description: 'directory to hold all the terraform plan'
     required: false
