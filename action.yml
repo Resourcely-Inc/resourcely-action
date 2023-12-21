@@ -17,6 +17,10 @@ inputs:
     description: 'directory to hold all the terraform plan'
     required: false
     default: 'tf-plan-files'
+  tf_plan_pattern:
+    description: 'Pattern for Terraform plan files (e.g., plan*)'
+    required: false
+    default: 'plan*'
 runs:
   using: "composite"
   steps:
@@ -51,7 +55,7 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
-        plans=$(ls -1 ${{ inputs.tf_plan_directory }}/plan* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
+        plans=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }}* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/${{ inputs.tf_plan_directory }}" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
