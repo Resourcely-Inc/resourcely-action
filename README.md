@@ -89,6 +89,6 @@ jobs:
           # set the resourcely api host
           resourcely_api_host: "https://api.resourcely.io"
           # set the tf directory for resourcely-action to read plan files from
-          tf_directory: "my-custom-directory"
+          tf_plan_directory: "my-custom-directory"
 ```
 
