@@ -63,6 +63,34 @@ jobs:
           resourcely_api_host: "https://api.resourcely.io"
 ```
 
+You can set Pattern for Terraform plan files (e.g., plan*). Default Value: plan*
+```
+# Trigger conditions for running this action
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: read
+
+# Define jobs to be run
+jobs:
+  resourcely-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Resourcely-Inc/resourcely-action@v1 # import the action
+        with:
+          # grab the resourcely api token stored in the repo secrets
+          resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
+          # set the resourcely api host
+          resourcely_api_host: "https://api.resourcely.io"
+          # set terraform plan file name
+          tf_plan_pattern: "plan"
+```
+
 
 If you want to store all your Terraform plan files in a custom-named directory, please specify your preferred configuration using the example provided below:
 ```
