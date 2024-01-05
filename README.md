@@ -13,8 +13,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
-  packages: read
+  statuses: read
 
 # Define jobs to be run
 jobs:
@@ -23,8 +22,8 @@ jobs:
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
         with:
-          # grab the GitHub access token stored in the repo secrets
-          gh_access_token: ${{ secrets.GH_ACCESS_TOKEN }}
+          # use the generated GITHUB_TOKEN
+          gh_access_token: ${{ github.token }}
           # grab the terraform api token stored in the repo secrets
           tf_api_token: ${{ secrets.TF_API_TOKEN }}
           # grab the resourcely api token stored in the repo secrets
