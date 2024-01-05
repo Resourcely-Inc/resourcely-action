@@ -25,8 +25,6 @@ jobs:
           tf_api_token: ${{ secrets.TF_API_TOKEN }}
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
-          # set the resourcely api host
-          resourcely_api_host: "https://api.resourcely.io"
 ```
 
 
@@ -56,8 +54,6 @@ jobs:
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
-          # set the resourcely api host
-          resourcely_api_host: "https://api.resourcely.io"
 ```
 
 You can set Pattern for Terraform plan files (e.g., plan*). Default Value: plan*
@@ -83,8 +79,6 @@ jobs:
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
-          # set the resourcely api host
-          resourcely_api_host: "https://api.resourcely.io"
           # set terraform plan file name
           tf_plan_pattern: "plan"
 ```
@@ -113,9 +107,6 @@ jobs:
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
-          # set the resourcely api host
-          resourcely_api_host: "https://api.resourcely.io"
           # set the tf directory for resourcely-action to read plan files from
           tf_plan_directory: "my-custom-directory"
 ```
-
