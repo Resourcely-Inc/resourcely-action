@@ -7,8 +7,6 @@ For Resourcely to access Terraform Cloud and retrieve the Terraform plan, enabli
 ```   
 # Trigger conditions for running this action
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -53,6 +51,7 @@ permissions:
 # Define jobs to be run
 jobs:
   resourcely-ci:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
@@ -79,6 +78,7 @@ permissions:
 # Define jobs to be run
 jobs:
   resourcely-ci:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
@@ -108,6 +108,7 @@ permissions:
 # Define jobs to be run
 jobs:
   resourcely-ci:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: Resourcely-Inc/resourcely-action@v1 # import the action
