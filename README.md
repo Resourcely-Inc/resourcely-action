@@ -9,10 +9,6 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-  contents: read
-  packages: read
-
 # Define jobs to be run
 jobs:
   resourcely-ci:
@@ -43,10 +39,6 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-  contents: read
-  packages: read
-
 # Define jobs to be run
 jobs:
   resourcely-ci:
@@ -69,10 +61,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
-permissions:
-  contents: read
-  packages: read
 
 # Define jobs to be run
 jobs:
@@ -99,10 +87,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
-permissions:
-  contents: read
-  packages: read
 
 # Define jobs to be run
 jobs:
