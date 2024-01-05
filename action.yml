@@ -4,6 +4,7 @@ inputs:
   gh_access_token:
     description: 'access token to access github'
     required: false
+    default: ${{ github.token }}
   tf_api_token:
     description: 'terraform cloud api token; if not specified, then will not go to terraform cloud to fetch the plan'
     required: false
