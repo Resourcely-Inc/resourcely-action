@@ -11,8 +11,9 @@ inputs:
     description: 'api to access resourcely api'
     required: true
   resourcely_api_host:
-    description: 'url for the resoucely api'
-    required: true
+    description: 'url for the resourcely api'
+    required: false
+    default: "https://api.resourcely.io"
   tf_plan_directory:
     description: 'directory to hold all the terraform plan'
     required: false
