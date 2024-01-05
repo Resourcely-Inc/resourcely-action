@@ -1,10 +1,9 @@
-
 ***There are two options available:***
 
 **Terraform Cloud**
 
 For Resourcely to access Terraform Cloud and retrieve the Terraform plan, enabling evaluation of your plans and policies with each pull request, configure the resourcely-action using the settings provided. For additional guidance, including instructions on creating an access token, please refer to the [Resourcely documentation](https://docs.resourcely.com/getting-started/onboarding/ci-cd-setup/github-actions/terraform-cloud)
-```   
+```
 # Trigger conditions for running this action
 on:
   pull_request:
