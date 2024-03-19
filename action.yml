@@ -56,13 +56,14 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
-        plans=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }}* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
-        docker run --rm \
-          -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/${{ inputs.tf_plan_directory }}" \
-          -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
-          ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
-          --api_host "${{ inputs.resourcely_api_host }}" \
-          --vcs github \
-          --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" \
-          "${plans}"
+        for plan in $(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }}*); do
+          docker run --rm \
+            -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/${{ inputs.tf_plan_directory }}" \
+            -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
+            ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
+            --api_host "${{ inputs.resourcely_api_host }}" \
+            --vcs github \
+            --change_request_url "${{ github.event.pull_request.html_url }}" \
+            --change_request_sha "${{ github.event.pull_request.head.sha }}" \
+            "${plan}"
+        done
