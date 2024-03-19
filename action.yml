@@ -22,6 +22,10 @@ inputs:
     description: 'Pattern for Terraform plan files (e.g., plan*)'
     required: false
     default: 'plan*'
+  docker_tag:
+    description: 'Tag of the resourcely-cli Docker image to use'
+    required: false
+    default: 'latest'
 runs:
   using: "composite"
   steps:
@@ -60,7 +64,7 @@ runs:
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/${{ inputs.tf_plan_directory }}" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
-          ghcr.io/resourcely-inc/resourcely-cli:latest evaluate \
+          ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }} evaluate \
           --api_host "${{ inputs.resourcely_api_host }}" \
           --vcs github \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
