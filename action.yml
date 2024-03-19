@@ -59,7 +59,7 @@ runs:
       shell: bash
       if: success()
       run: |
-        docker pull ghcr.io/resourcely-inc/resourcely-cli:latest
+        docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }}
         plans=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }}* | sed "s|^|/data/|" | tr '\n' ',' | sed 's/,$//')
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/${{ inputs.tf_plan_directory }}" \
