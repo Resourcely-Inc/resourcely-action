@@ -14,7 +14,7 @@ jobs:
   resourcely-ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: Resourcely-Inc/resourcely-action@v1 # import the action
+      - uses: Resourcely-Inc/resourcely-action@main
         with:
           # grab the GitHub access token stored in the repo secrets
           gh_access_token: ${{ secrets.GH_ACCESS_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: Resourcely-Inc/resourcely-action@v1 # import the action
+      - uses: Resourcely-Inc/resourcely-action@main
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: Resourcely-Inc/resourcely-action@v1 # import the action
+      - uses: Resourcely-Inc/resourcely-action@main
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
@@ -88,7 +88,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: Resourcely-Inc/resourcely-action@v1 # import the action
+      - uses: Resourcely-Inc/resourcely-action@main
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
