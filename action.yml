@@ -18,16 +18,24 @@ inputs:
     description: 'tag of the resourcely-cli Docker image to use'
     required: false
     default: 'latest'
+  tf_plan_directory:
+    description: 'directory to hold all the terraform plan'
+    required: false
+    default: 'tf-plan-files'
+  tf_plan_pattern:
+    description: 'Pattern for Terraform plan files (e.g., plan*)'
+    required: false
+    default: 'plan*'
 runs:
   using: "composite"
   steps:
     - name: Create directory for plan files if not present
       shell: bash
       run: |
-        if [[ -d "tf-plan-files" ]]; then
+        if [[ -d "${{ inputs.tf_plan_directory }}" ]]; then
           echo "Directory already exist"
         else
-          mkdir tf-plan-files
+          mkdir ${{ inputs.tf_plan_directory }}
         fi
 
     - name: Wait for checks to complete
@@ -44,7 +52,7 @@ runs:
           -e TF_API_TOKEN="${{ inputs.tf_api_token }}" \
           -e RESOURCELY_API_HOST="${{ inputs.resourcely_api_host }}" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
-          -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
+          -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag }}
 
     - name: Evaluate Code With Resourcely Guardrails
@@ -52,15 +60,17 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }}
-        PLAN_MANIFEST=""
+        PLANS_ARGS=""
         if [[ "${{ inputs.tf_api_token }}" != "" ]]; then
-          PLAN_MANIFEST="--plan_manifest /data/tf-plan-files/manifest.json"
+          PLANS_ARGS="--plan_manifest /data/tf-plan-files/manifest.json"
+        else
+          PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
         fi
         docker run --rm \
-          -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
+          -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }} evaluate \
           --api_host "${{ inputs.resourcely_api_host }}" \
           --vcs github \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLAN_MANIFEST
+          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS
