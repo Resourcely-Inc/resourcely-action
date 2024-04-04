@@ -60,12 +60,8 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }}
-        PLANS_ARGS=""
-        if [[ "${{ inputs.tf_api_token }}" != "" ]]; then
-          PLANS_ARGS="--plan_manifest /data/tf-plan-files/manifest.json"
-        else
-          PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
-        fi
+        PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
+        echo $PLANS_ARGS
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
