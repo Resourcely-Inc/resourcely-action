@@ -36,7 +36,7 @@ runs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: |
-        docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:latest
+        docker pull ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag }}
         ENCODED_GITHUB_CONTEXT=$(echo -n "$GITHUB_CONTEXT" | base64)
         docker run \
           -e GITHUB_TOKEN="${{ inputs.gh_access_token }}" \
@@ -45,7 +45,7 @@ runs:
           -e RESOURCELY_API_HOST="${{ inputs.resourcely_api_host }}" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           -v "$(pwd)/tf-plan-files:/app/tf-plan-files" \
-          ghcr.io/resourcely-inc/wait-for-terraform-plan:latest
+          ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag }}
 
     - name: Evaluate Code With Resourcely Guardrails
       shell: bash
