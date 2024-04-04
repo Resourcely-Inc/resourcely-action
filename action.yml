@@ -52,6 +52,10 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }}
+        PLAN_MANIFEST=""
+        if [[ "${{ inputs.tf_api_token }}" != "" ]]; then
+          PLAN_MANIFEST="--plan_manifest /data/tf-plan-files/manifest.json"
+        fi
         docker run --rm \
           -v "$(pwd)/tf-plan-files:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
@@ -59,5 +63,4 @@ runs:
           --api_host "${{ inputs.resourcely_api_host }}" \
           --vcs github \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" \
-          --plan_manifest /data/tf-plan-files/manifest.json 
+          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLAN_MANIFEST
