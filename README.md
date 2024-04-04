@@ -68,6 +68,8 @@ jobs:
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
+          # set terraform plan pattern
+          tf_plan_pattern: "plan*"
 ```
 
 
@@ -90,4 +92,6 @@ jobs:
         with:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
+          # set the tf directory for resourcely-action to read plan files from
+          tf_plan_directory: "my-custom-directory"
 ```
