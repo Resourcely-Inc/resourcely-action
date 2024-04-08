@@ -26,6 +26,9 @@ inputs:
     description: 'Pattern for Terraform plan files (e.g., plan*)'
     required: false
     default: 'plan*'
+  manifest:
+    description: 'Json manifest describing plans to expect'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -54,6 +57,14 @@ runs:
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag }}
+
+
+    - name: Save Manifest to file
+      if: ${{ inputs.tf_api_token == '' && inputs.manifest != '' }}
+      uses: fishcharlie/CmdToFile@v1.0.0
+      with:
+        data: ${{inputs.manifest}}
+        output: ${{inputs.tf_plan_directory}}/manifest.json
 
     - name: Evaluate Code With Resourcely Guardrails
       shell: bash

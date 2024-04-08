@@ -48,6 +48,27 @@ jobs:
           # grab the resourcely api token stored in the repo secrets
           resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
 ```
+If you are submitting multiple plans locally you'll need to supply a manifest as well with the appropriate configuration for your plan submissions setup. e.g.:
+
+```
+ ...
+        with:
+          # grab the resourcely api token stored in the repo secrets
+          resourcely_api_token: ${{ secrets.RESOURCELY_API_TOKEN }}
+          manifest: |
+            {
+              "plans": [{
+                "plan_file": "plan-dev.json",
+                "config_root_path": ".",
+                "environment": "dev"
+              },{
+                "plan_file": "plan-prod.json",
+                "config_root_path": ".",
+                "environment": "prod"
+              }]
+            }
+```
+
 
 You can set Pattern for Terraform plan files (e.g., plan*). Default Value: plan*
 ```
