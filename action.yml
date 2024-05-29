@@ -83,4 +83,5 @@ runs:
           ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }} evaluate \
           --api_host "${{ inputs.resourcely_api_host }}" \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS
+          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS \
+          --log ${{ runner.debug == '1' && 'debug' || 'info' }}
