@@ -87,7 +87,7 @@ runs:
           if [[ ! -f "${{ inputs.modules_file }}" ]]; then
             echo "Modules file not found at ${{ inputs.modules_file }}"
           else
-            MODULES_FILE_ARGS=--modules="${{ inputs.modules_file }}"
+            MODULES_FILE_ARGS=--modules_file="${{ inputs.modules_file }}"
           fi
         fi
 
