@@ -29,6 +29,9 @@ inputs:
   manifest:
     description: 'Json manifest describing plans to expect'
     required: false
+  modules_file:
+    description: 'JSON file produced by terraform describing the modules in the current configuration'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -58,7 +61,6 @@ runs:
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag }}
 
-
     - name: Save Manifest to file
       if: ${{ inputs.tf_api_token == '' && inputs.manifest != '' }}
       uses: fishcharlie/CmdToFile@v1.0.0
@@ -71,17 +73,31 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }}
+        
         PLANS_ARGS=""
-        if [[ -f ${{ inputs.tf_plan_directory }}/manifest.json ]]; then
+        if [[ -f "${{ inputs.tf_plan_directory }}/manifest.json" ]]; then
           PLANS_ARGS="--plan_manifest /data/tf-plan-files/manifest.json"
         else
           PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
         fi
+        
+
+        MODULES_FILE_ARGS=""
+        if [[ -n "${{ inputs.modules_file }}" ]]; then
+          if [[ ! -f "${{ inputs.modules_file }}" ]]; then
+            echo "Modules file not found at ${{ inputs.modules_file }}"
+          else
+            MODULES_FILE_ARGS=--modules="${{ inputs.modules_file }}"
+          fi
+        fi
+
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }} evaluate \
-          --api_host "${{ inputs.resourcely_api_host }}" \
-          --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS \
-          --log ${{ runner.debug == '1' && 'debug' || 'info' }}
+            --api_host "${{ inputs.resourcely_api_host }}" \
+            --change_request_url "${{ github.event.pull_request.html_url }}" \
+            --change_request_sha "${{ github.event.pull_request.head.sha }}" \
+            --log ${{ runner.debug == '1' && 'debug' || 'info' }} \
+            $PLANS_ARGS \
+            $MODULES_FILE_ARGS
