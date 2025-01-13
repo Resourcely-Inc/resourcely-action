@@ -78,7 +78,7 @@ runs:
       shell: bash
       if: success()
       run: |
-        docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_wait_for_terraform || inputs.docker_tag }}
+        docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_resourcely_cli || inputs.docker_tag }}
         PLANS_ARGS=""
         if [[ -f ${{ inputs.tf_plan_directory }}/manifest.json ]]; then
           PLANS_ARGS="--plan_manifest /data/tf-plan-files/manifest.json"
@@ -88,7 +88,7 @@ runs:
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
-          ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_wait_for_terraform || inputs.docker_tag }} evaluate \
+          ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_resourcely_cli || inputs.docker_tag }} evaluate \
           --api_host "${{ inputs.resourcely_api_host }}" \
           --change_request_url "${{ github.event.pull_request.html_url }}" \
           --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS \
