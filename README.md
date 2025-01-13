@@ -116,3 +116,18 @@ jobs:
           # set the tf directory for resourcely-action to read plan files from
           tf_plan_directory: "my-custom-directory"
 ```
+
+**Configuration**
+This action pulls two docker images from Resourcely. The first is [wait-for-terraform](https://github.com/Resourcely-Inc/resourcely-container-registry/pkgs/container/wait-for-terraform-plan/319601944?tag=latest) and the second is [resourcely-cli](https://github.com/Resourcely-Inc/resourcely-container-registry/pkgs/container/resourcely-cli). By default we pull the latest version, but if you would like to pin to a specific version you can do so by using `docker_tag_wait_for_terraform` and `docker_tag_resourcely_cli`
+```
+jobs:
+  resourcely-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Resourcely-Inc/resourcely-action@main
+        with:
+          ...
+          # pin versions of resourcely containers
+          docker_tag_wait_for_terraform: v0.1.6
+          docker_tag_resourcely_cli: v1.0.45
+```
