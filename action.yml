@@ -81,9 +81,6 @@ runs:
           PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
         fi
         
-
-        ls -lah .
-        ls -lah .terraform
         MODULES_FILE_ARG=""
         MODULES_FILE_MOUNT=""
         if [[ -n "${{ inputs.modules_file }}" ]]; then
