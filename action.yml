@@ -82,17 +82,20 @@ runs:
         fi
         
 
-        MODULES_FILE_ARGS=""
-        if [[ -n "${{ inputs.modules_file }}" ]]; then
-          if [[ ! -f "${{ inputs.modules_file }}" ]]; then
+        MODULES_FILE_ARG=""
+        MODULES_FILE_MOUNT=""
+        if [[ -n "$(pwd)/${{ inputs.modules_file }}" ]]; then
+          if [[ ! -f "$(pwd)/${{ inputs.modules_file }}" ]]; then
             echo "Modules file not found at ${{ inputs.modules_file }}"
           else
-            MODULES_FILE_ARGS=--modules_file="${{ inputs.modules_file }}"
+            MODULES_FILE_ARG=--modules_file="/data/modules.json"
+            MODULES_FILE_MOUNT=-v "$(pwd)/${{ inputs.modules_file }}:/data/modules.json"
           fi
         fi
 
         docker run --rm \
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
+          $MODULES_FILE_MOUNT \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag }} evaluate \
             --api_host "${{ inputs.resourcely_api_host }}" \
@@ -100,4 +103,4 @@ runs:
             --change_request_sha "${{ github.event.pull_request.head.sha }}" \
             --log ${{ runner.debug == '1' && 'debug' || 'info' }} \
             $PLANS_ARGS \
-            $MODULES_FILE_ARGS
+            $MODULES_FILE_ARG
