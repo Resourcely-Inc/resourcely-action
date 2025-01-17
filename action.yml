@@ -80,13 +80,20 @@ runs:
         else
           PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
         fi
+
+        pwd
+        
+        ls -lah .
+        echo "${{ inputs.modules_file }}"
+        ls -lah ${{ inputs.modules_file }}
         
         MODULES_FILE_ARG=""
         MODULES_FILE_MOUNT=""
         if [[ -n "${{ inputs.modules_file }}" ]]; then
           MODULES_FILE_PATH="$(pwd)/${{ inputs.modules_file }}"
           if [[ ! -f "$MODULES_FILE_PATH" ]]; then
-            echo "Modules file not found at $MODULES_FILE_PATH"
+            echo -e "\033[31mModules file not found at $MODULES_FILE_PATH\033[0m"
+            exit 1
           else
             MODULES_FILE_ARG=--modules_file="/data/modules.json"
             MODULES_FILE_MOUNT=-v "$MODULES_FILE_PATH:/data/modules.json"
