@@ -93,6 +93,9 @@ runs:
         MODULES_FILE_PATH="$(pwd)/${{ inputs.modules_file }}"
         MODULES_FILE_ARG=""
         MODULES_FILE_MOUNT=""
+
+      cat "$MODULES_FILE_PATH"
+        
         if [[ -n "${{ inputs.modules_file }}" ]]; then
           if [[ ! -f "$MODULES_FILE_PATH" ]]; then
             echo -e "\033[31mModules file not found at $MODULES_FILE_PATH\033[0m"
