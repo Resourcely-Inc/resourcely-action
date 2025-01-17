@@ -99,8 +99,8 @@ runs:
             exit 1
           else
             echo "Modules file found at $MODULES_FILE_PATH"
-            MODULES_FILE_ARG=--modules_file="/data/modules.json"
-            MODULES_FILE_MOUNT=-v "$MODULES_FILE_PATH:/data/modules.json"
+            MODULES_FILE_ARG="--modules_file=/data/modules.json"
+            MODULES_FILE_MOUNT="-v $MODULES_FILE_PATH:/data/modules.json"
           fi
         fi
 
