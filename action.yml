@@ -85,7 +85,7 @@ runs:
         
         ls -lah .
         echo "${{ inputs.modules_file }}"
-        ls -lah ${{ inputs.modules_file }}
+        ls -lah tf-plan-files
         
         MODULES_FILE_ARG=""
         MODULES_FILE_MOUNT=""
