@@ -94,7 +94,7 @@ runs:
         MODULES_FILE_ARG=""
         MODULES_FILE_MOUNT=""
 
-      cat "$MODULES_FILE_PATH"
+        cat "$MODULES_FILE_PATH"
         
         if [[ -n "${{ inputs.modules_file }}" ]]; then
           if [[ ! -f "$MODULES_FILE_PATH" ]]; then
