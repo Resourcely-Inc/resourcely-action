@@ -1,33 +1,33 @@
 name: 'Resourcely Change Management'
-description: 'Scan the pr against all related guardrails'
+description: 'Scan the PR against all related guardrails'
 inputs:
   gh_access_token:
-    description: 'access token to access github'
+    description: 'Access token for Github'
     required: false
   tf_api_token:
-    description: 'terraform cloud api token; if not specified, then will not go to terraform cloud to fetch the plan'
+    description: 'Terraform Cloud API token; if not specified, will not attempt to fetch the plan from Terraform Cloud'
     required: false
   resourcely_api_token:
-    description: 'api to access resourcely api'
+    description: 'Resourcely API token'
     required: true
   resourcely_api_host:
-    description: 'url for the resourcely api'
+    description: 'Resourcely API URL'
     required: false
     default: "https://api.resourcely.io"
   docker_tag:
-    description: 'tag of the Docker image to use for both wait-for-terraform and resourcely-cli (deprecated in favor of using docker_tag_wait_for_terraform and docker_tag_resourcely_cli)'
+    description: 'Tag of the Docker image to use for both wait-for-terraform and resourcely-cli (deprecated in favor of using docker_tag_wait_for_terraform and docker_tag_resourcely_cli)'
     required: false
     default: 'latest'
   docker_tag_wait_for_terraform:
-    description: 'tag of the wait-for-terraform Docker image to use'
+    description: 'Tag of the wait-for-terraform Docker image to use'
     required: false
     default: ''
   docker_tag_resourcely_cli:
-    description: 'tag of the resourcely-cli Docker image to use'
+    description: 'Tag of the resourcely-cli Docker image to use'
     required: false
     default: ''
   tf_plan_directory:
-    description: 'directory to hold all the terraform plan'
+    description: 'Directory to store the Terraform plan files'
     required: false
     default: 'tf-plan-files'
   tf_plan_pattern:
@@ -35,7 +35,10 @@ inputs:
     required: false
     default: 'plan*'
   manifest:
-    description: 'Json manifest describing plans to expect'
+    description: 'JSON manifest describing plans to expect'
+    required: false
+  modules_file:
+    description: 'JSON file produced by terraform describing the modules in the current configuration'
     required: false
 runs:
   using: "composite"
@@ -66,7 +69,6 @@ runs:
           -v "$(pwd)/${{ inputs.tf_plan_directory }}:/app/tf-plan-files" \
           ghcr.io/resourcely-inc/wait-for-terraform-plan:${{ inputs.docker_tag_wait_for_terraform != '' && inputs.docker_tag_wait_for_terraform || inputs.docker_tag }}
 
-
     - name: Save Manifest to file
       if: ${{ inputs.tf_api_token == '' && inputs.manifest != '' }}
       uses: fishcharlie/CmdToFile@v1.0.0
@@ -79,17 +81,34 @@ runs:
       if: success()
       run: |
         docker pull ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_resourcely_cli || inputs.docker_tag }}
+
         PLANS_ARGS=""
-        if [[ -f ${{ inputs.tf_plan_directory }}/manifest.json ]]; then
+        if [[ -f "${{ inputs.tf_plan_directory }}/manifest.json" ]]; then
           PLANS_ARGS="--plan_manifest /data/tf-plan-files/manifest.json"
         else
           PLANS_ARGS=$(ls -1 ${{ inputs.tf_plan_directory }}/${{ inputs.tf_plan_pattern }} | xargs -I tok basename tok | sed "s|^|--plan /data/tf-plan-files/|" | tr '\n' ' ')
         fi
+
+        MODULES_FILE_PATH="$(pwd)/${{ inputs.modules_file }}"
+        MODULES_FILE_ARG=""
+        MODULES_FILE_MOUNT=""
+        if [[ -n "${{ inputs.modules_file }}" ]]; then
+          if [[ ! -f "$MODULES_FILE_PATH" ]]; then
+            echo -e "\033[31mModules file not found at $MODULES_FILE_PATH\033[0m"
+            exit 1
+          else
+            MODULES_FILE_ARG="--modules_file=/data/modules.json"
+            MODULES_FILE_MOUNT="-v $MODULES_FILE_PATH:/data/modules.json"
+          fi
+        fi
+
         docker run --rm \
-          -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" \
+          -v "$(pwd)/${{ inputs.tf_plan_directory }}:/data/tf-plan-files" $MODULES_FILE_MOUNT \
           -e RESOURCELY_API_TOKEN="${{ inputs.resourcely_api_token }}" \
           ghcr.io/resourcely-inc/resourcely-cli:${{ inputs.docker_tag_resourcely_cli != '' && inputs.docker_tag_resourcely_cli || inputs.docker_tag }} evaluate \
-          --api_host "${{ inputs.resourcely_api_host }}" \
-          --change_request_url "${{ github.event.pull_request.html_url }}" \
-          --change_request_sha "${{ github.event.pull_request.head.sha }}" $PLANS_ARGS \
-          --log ${{ runner.debug == '1' && 'debug' || 'info' }}
+            --api_host "${{ inputs.resourcely_api_host }}" \
+            --change_request_url "${{ github.event.pull_request.html_url }}" \
+            --change_request_sha "${{ github.event.pull_request.head.sha }}" \
+            --log ${{ runner.debug == '1' && 'debug' || 'info' }} \
+            $PLANS_ARGS \
+            $MODULES_FILE_ARG
