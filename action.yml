@@ -95,7 +95,6 @@ runs:
         if [[ -n "${{ inputs.modules_file }}" ]]; then
           if [[ ! -f "$MODULES_FILE_PATH" ]]; then
             echo -e "\033[31mModules file not found at $MODULES_FILE_PATH\033[0m"
-            exit 1
           else
             MODULES_FILE_ARG="--modules_file=/data/modules.json"
             MODULES_FILE_MOUNT="-v $MODULES_FILE_PATH:/data/modules.json"
